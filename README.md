@@ -1,74 +1,59 @@
-🚗 Automated Parking Space Counter
-This project uses Computer Vision techniques to detect and count available parking spaces in a video feed. It processes video footage to differentiate between empty and occupied spots based on pixel density, providing a real-time count of free spaces.
+# Parking Space Counter
 
-🌟 Features
-Parking Spot Selector (ParkingSpacePicker.py): A utility tool to manually define parking spots on a reference image using mouse clicks.
+A computer vision project that detects and counts available parking spaces in real-time using Python and OpenCV. This system utilizes image processing techniques to distinguish between empty and occupied parking spots based on a video feed.
 
-Left Click: Add a parking spot.
+## 📂 Project Structure
 
-Right Click: Remove a parking spot.
+* **`ParkingSpacePicker.py`**: A utility script to manually select and define parking spot coordinates on a reference image.
+* **`main.py`**: The core application that processes the video feed, applies image thresholds, and counts available spaces.
+* **`CarParkPos`**: A pickle file capable of storing the coordinates of the selected parking spaces.
 
-Persistence: Saves coordinates to a pickle file for the main application to use.
+## 🚀 Features
 
-Real-time Detection (main.py): Processes video input to monitor parking status.
+* **Manual Position Selector**: users can define parking spots by clicking on an image. Left-click adds a spot, and right-click removes it.
+* **Real-Time Detection**: Monitors a video feed (`carPark.mp4`) to track parking availability continuously.
+* **Dynamic Status Display**:
+    * **Green**: Indicates an empty parking spot.
+    * **Red**: Indicates an occupied parking spot.
+* **Live Counter**: Displays the total count of free spaces versus the total number of defined spaces using `cvzone`.
 
-Image Processing Pipeline: Utilizes Grayscale, Gaussian Blur, Adaptive Thresholding, Median Blur, and Dilation to isolate vehicles.
+## 🛠️ Dependencies
 
-Dynamic Counters: Visualizes the number of free spots vs. total spots directly on the video feed.
+Ensure you have the following Python libraries installed:
 
-Color Indicators: Green for available spots, Red for occupied spots.
+* `opencv-python`
+* `cvzone`
+* `numpy`
+* `pickle` (Standard Python library)
 
-🛠️ Tech Stack
-Python 3.x
+## ⚙️ How It Works
 
-OpenCV (cv2): For image processing and video manipulation.
+### 1. Position Selection (`ParkingSpacePicker.py`)
+This script opens a reference image (`carParkImg.png`). It detects mouse events to record the top-left coordinates of parking spots. These coordinates are saved into a `CarParkPos` file using the `pickle` module for the main script to access.
 
-Cvzone: For easy overlay of text and graphics.
+### 2. Processing Pipeline (`main.py`)
+The main script processes the video feed through several stages to isolate vehicles:
+1.  **Grayscale & Blur**: Converts the image to grayscale and applies a Gaussian blur.
+2.  **Adaptive Thresholding**: Converts the image to a binary format (black and white) to highlight structure.
+3.  **Median Blur & Dilation**: Removes noise and thickens the pixel edges for better detection.
+4.  **Pixel Counting**: The script crops the region of every defined parking spot and counts the non-zero (white) pixels.
+    * If the pixel count is **< 900**, the spot is considered **free**.
+    * If the pixel count is **> 900**, the spot is considered **occupied**.
 
-NumPy: For matrix operations and kernel definition.
+## 📝 Usage
 
-Pickle: For serializing and saving parking space coordinates.
+1.  **Define Spots**:
+    Run the picker script to define your parking layout.
+    ```bash
+    python ParkingSpacePicker.py
+    ```
+    * **Left-click** to add a parking box.
+    * **Right-click** to remove a parking box.
 
-📂 File Structure
-ParkingSpacePicker.py: Script to interactively select and save parking spot coordinates.
+2.  **Run Detection**:
+    Start the detection system.
+    ```bash
+    python main.py
+    ```
 
-main.py: Main script that runs the detection algorithm on the video feed.
-
-CarParkPos: (Generated) Pickle file containing the coordinates of selected spots.
-
-carParkImg.png: Reference image used for selecting spots.
-
-carPark.mp4: Source video file for testing the detection system.
-
-⚙️ How It Works
-Coordinate Mapping: The user marks the Region of Interest (ROI) for every parking spot using the picker script.
-
-Preprocessing: The video frame is converted to binary (black and white) using adaptive thresholding to highlight edges and objects (cars).
-
-Pixel Counting: The system crops the frame to the defined ROIs and counts the number of non-zero (white) pixels.
-
-Decision Making:
-
-If pixel count < 900 (variable threshold): Spot is Empty.
-
-If pixel count > 900: Spot is Occupied.
-
-🚀 How to Run
-Install Dependencies:
-
-Bash
-
-pip install opencv-python cvzone numpy
-Select Parking Spots: Run the picker to define the layout.
-
-Bash
-
-python ParkingSpacePicker.py
-Click on the image to define spots. Close the window when finished to save.
-
-Run Detection: Run the main script to see the results.
-
-Bash
-
-python main.py
-Note: Ensure the file paths in main.py (currently absolute paths like C:\Users\kamal...) are updated to match your local directory structure or changed to relative paths.
+> **Note**: You may need to update the file paths for the video source and `CarParkPos` file in `main.py` to match your local directory structure.
